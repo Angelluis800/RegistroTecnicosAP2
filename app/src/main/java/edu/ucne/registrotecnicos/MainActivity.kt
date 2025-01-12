@@ -58,7 +58,21 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
+    @Composable
+    private fun TicketRow(it: TechnicianEntity) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(modifier = Modifier.weight(1f), text = it.technicianId.toString())
+            Text(
+                modifier = Modifier.weight(2f),
+                text = it.name,
+                style = MaterialTheme.typography.headlineLarge
+            )
+            Text(modifier = Modifier.weight(2f), text =  it.salary.toString())
+        }
+        HorizontalDivider()
+    }
 
 
     private suspend fun saveTechnician(technician: TechnicianEntity) {
