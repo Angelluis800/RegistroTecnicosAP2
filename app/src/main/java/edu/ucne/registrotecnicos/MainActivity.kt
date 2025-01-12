@@ -17,6 +17,7 @@ import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.RoomDatabase
 import androidx.room.Upsert
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 import kotlinx.coroutines.flow.Flow
@@ -61,5 +62,15 @@ interface TechnicianDao{
 
     @Query("SELECT * FROM Technicians")
     fun getAll(): Flow<List<TechnicianEntity>>
+}
+
+@Database(
+    entities = [
+        TechnicianEntity::class
+    ],
+    version = 1,
+    exportSchema = false
+)abstract  class TechnicianDb : RoomDatabase() {
+    abstract fun technicianDao(): TechnicianDao
 }
 
