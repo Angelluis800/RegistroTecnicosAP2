@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -17,21 +18,45 @@ import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Upsert
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 import kotlinx.coroutines.flow.Flow
 
 class MainActivity : ComponentActivity() {
+    private lateinit var technicianDb: TechnicianDb
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        technicianDb = Room.databaseBuilder(
+            applicationContext,
+            TechnicianDb::class.java,
+            "TechnicianDb"
+        ).fallbackToDestructiveMigration()
+            .build()
+
         setContent {
             RegistroTecnicosTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        //Aqui va el TechnicianScreen
+                    }
+                }
 
             }
         }
     }
+}
+
+private suspend fun saveTechnician(technician: TechnicianEntity) {
+
 }
 
 @Entity(tableName = "Technicians")
@@ -70,7 +95,7 @@ interface TechnicianDao{
     ],
     version = 1,
     exportSchema = false
-)abstract  class TechnicianDb : RoomDatabase() {
+)abstract class TechnicianDb : RoomDatabase() {
     abstract fun technicianDao(): TechnicianDao
 }
 
