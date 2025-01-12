@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.room.Database
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,4 +27,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Entity(tableName = "Technician")
+data class TechnicianEntity(
+    @PrimaryKey
+    val id: Int? = null,
+    val name: String = "",
+    val salary: Double = 0.0
+)
 
