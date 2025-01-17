@@ -48,6 +48,9 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Upsert
+import edu.ucne.registrotecnicos.data.local.database.TechnicianDb
+import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
+import edu.ucne.registrotecnicos.presentation.technician.TechnicianScreen
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -74,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-
+                        TechnicianScreen()
                     }
                 }
 
@@ -86,47 +89,6 @@ class MainActivity : ComponentActivity() {
     private suspend fun saveTechnician(technician: TechnicianEntity) {
         technicianDb.technicianDao().save(technician)
     }
-
-    @Entity(tableName = "Technicians")
-    data class TechnicianEntity(
-        @PrimaryKey
-        val technicianId: Int? = null,
-        val name: String = "",
-        val salary: Double = 0.0
-    )
-
-    @Dao
-    interface TechnicianDao{
-        @Upsert()
-        suspend fun save(technician: TechnicianEntity)
-
-        @Query(
-            """
-        SELECT * 
-        FROM Technicians
-        WHERE technicianId =:id  
-        LIMIT 1
-        """
-        )
-        suspend fun find(id: Int): TechnicianEntity?
-
-        @Delete
-        suspend fun delete(technician: TechnicianEntity)
-
-        @Query("SELECT * FROM Technicians")
-        fun getAll(): Flow<List<TechnicianEntity>>
-    }
-
-    @Database(
-        entities = [
-            TechnicianEntity::class
-        ],
-        version = 1,
-        exportSchema = false
-    )abstract class TechnicianDb : RoomDatabase() {
-        abstract fun technicianDao(): TechnicianDao
-    }
-
 }
 
 
