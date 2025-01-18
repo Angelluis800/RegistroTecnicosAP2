@@ -11,6 +11,6 @@ import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
         ],
         version = 1,
         exportSchema = false
-    )abstract class TechnicianDb : RoomDatabase() {
+    )abstract class AppDataDb : RoomDatabase() {
         abstract fun technicianDao(): TechnicianDao
     }

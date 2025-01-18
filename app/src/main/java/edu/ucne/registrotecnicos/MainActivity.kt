@@ -4,16 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import edu.ucne.registrotecnicos.data.local.database.TechnicianDb
+import edu.ucne.registrotecnicos.data.local.database.AppDataDb
 import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
 import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
 import edu.ucne.registrotecnicos.presentation.navigation.GeneralNavHost
@@ -28,8 +23,8 @@ class MainActivity : ComponentActivity() {
 
         val technicianDb = Room.databaseBuilder(
             applicationContext,
-            TechnicianDb::class.java,
-            "TechnicianDb"
+            AppDataDb::class.java,
+            "AppDataDb"
         ).fallbackToDestructiveMigration()
             .build()
         tecnicoRepository = TecnicoRepository(technicianDb)

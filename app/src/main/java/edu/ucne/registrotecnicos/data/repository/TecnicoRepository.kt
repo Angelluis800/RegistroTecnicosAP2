@@ -1,11 +1,11 @@
 package edu.ucne.registrotecnicos.data.repository
 
-import edu.ucne.registrotecnicos.data.local.database.TechnicianDb
+import edu.ucne.registrotecnicos.data.local.database.AppDataDb
 import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
 import kotlinx.coroutines.flow.Flow
 
 class TecnicoRepository(
-     private val tecnicoDb: TechnicianDb
+     private val tecnicoDb: AppDataDb
 ) {
     suspend fun save(tecnico: TechnicianEntity) {
         tecnicoDb.technicianDao().save(tecnico)
