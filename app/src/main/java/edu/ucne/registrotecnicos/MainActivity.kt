@@ -11,28 +11,31 @@ import androidx.room.Room
 import edu.ucne.registrotecnicos.data.local.database.AppDataDb
 import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
 import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
+import edu.ucne.registrotecnicos.data.repository.TicketRepository
 import edu.ucne.registrotecnicos.presentation.navigation.GeneralNavHost
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var tecnicoRepository: TecnicoRepository
+    private  lateinit var ticketRepository: TicketRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val technicianDb = Room.databaseBuilder(
+        val appDataDb = Room.databaseBuilder(
             applicationContext,
             AppDataDb::class.java,
             "AppDataDb"
         ).fallbackToDestructiveMigration()
             .build()
-        tecnicoRepository = TecnicoRepository(technicianDb)
+        tecnicoRepository = TecnicoRepository(appDataDb)
+        ticketRepository = TicketRepository(appDataDb)
 
         setContent {
             RegistroTecnicosTheme {
                 val navHost = rememberNavController()
-                GeneralNavHost(navHost,tecnicoRepository)
+                GeneralNavHost(navHost,tecnicoRepository,ticketRepository)
             }
         }
     }
