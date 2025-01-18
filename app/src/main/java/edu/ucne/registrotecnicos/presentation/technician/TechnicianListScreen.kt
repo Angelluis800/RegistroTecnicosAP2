@@ -67,7 +67,7 @@ import java.util.Locale
                     createTecnico()
                 },
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.BottomEnd)
                     .padding(20.dp)
             ) {
                 Icon(
