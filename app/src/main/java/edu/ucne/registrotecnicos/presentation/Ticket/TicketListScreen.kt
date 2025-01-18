@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -62,22 +63,22 @@ fun TicketListScreen(
                     .fillMaxWidth()
             ) {
                 Text(
+                    text = "Fecha",
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
                     text = "ID",
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
                     text = "Asunto",
-                    modifier = Modifier.weight(3f),
+                    modifier = Modifier.weight(2f),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
                     text = "Cliente",
-                    modifier = Modifier.weight(3f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = "Acción",
                     modifier = Modifier.weight(2f),
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -91,7 +92,6 @@ fun TicketListScreen(
                     TicketRow(
                         ticket = ticket,
                         editTicket = { ticket.ticketId?.let { it1 -> editTicket(it1)}},
-                        deleteTicket = { deleteTicket(ticket) }
                     )
                 }
             }
@@ -114,7 +114,6 @@ fun TicketListScreen(
 private fun TicketRow(
     ticket: TicketEntity,
     editTicket: (Int) -> Unit,
-    deleteTicket: (TicketEntity) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -132,32 +131,31 @@ private fun TicketRow(
     ) {
         Text(
             modifier = Modifier.weight(1f),
+            text = ticket.fecha,
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Text(
+            modifier = Modifier.weight(1f),
             text = ticket.ticketId.toString(),
             style = MaterialTheme.typography.bodyMedium
         )
 
-
         Text(
-            modifier = Modifier.weight(3f),
+            modifier = Modifier.weight(2f),
             text = ticket.asunto,
             style = MaterialTheme.typography.bodyMedium
         )
 
         Text(
-            modifier = Modifier.weight(3f),
+            modifier = Modifier.weight(2f),
             text = ticket.cliente,
             style = MaterialTheme.typography.bodyMedium
         )
-
-        OutlinedButton(
-            onClick = { deleteTicket(ticket) },
-            modifier = Modifier.weight(2f)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Borrar Ticket"
-            )
-        }
+        Icon(
+            imageVector = Icons.Default.Info,
+            contentDescription = "detalle"
+        )
     }
     HorizontalDivider()
 }
