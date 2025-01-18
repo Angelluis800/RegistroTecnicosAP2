@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -188,7 +191,7 @@ fun TicketScreen(
                                 scope.launch {
                                     ticketRepository.save(
                                         TicketEntity(
-                                            ticketId = if (ticketId > 0) ticketId else 0,
+                                            ticketId = if (ticketId > 0) ticketId else null,
                                             fecha = fecha,
                                             prioridadId = prioridad.toInt(),
                                             cliente = cliente,
@@ -211,7 +214,40 @@ fun TicketScreen(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = "save button"
                             )
-                            Text(text = "Guardar")
+                            Text(text = if (ticketId > 0) "Editar" else "Guardar")
+                        }
+                        if(ticketId > 0){
+                            OutlinedButton(
+                                onClick = {
+                                    scope.launch {
+                                        ticketRepository.delete(
+                                            TicketEntity(
+                                                ticketId = ticketId,
+                                                fecha = "",
+                                                prioridadId = 0,
+                                                cliente = "",
+                                                asunto = "",
+                                                descripcion = "",
+                                                tecnicoId = 0
+                                            )
+                                        )
+                                        cliente = ""
+                                        asunto = ""
+                                        descripcion = ""
+                                        prioridad = ""
+                                        fecha = ""
+                                        tecnicoId = 0
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Eliminar",
+                                    tint = Color.Red
+                                )
+                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                                Text(text = "Eliminar", color = Color.Red)
+                            }
                         }
                     }
                 }
