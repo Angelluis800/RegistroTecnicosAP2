@@ -13,7 +13,7 @@ import edu.ucne.registrotecnicos.presentation.technician.TechnicianListScreen
 import edu.ucne.registrotecnicos.presentation.technician.TechnicianScreen
 
 @Composable
-fun TecnicoNavHost(
+fun GeneralNavHost(
     navHostController: NavHostController,
     tecnicoRepository: TecnicoRepository
 ){

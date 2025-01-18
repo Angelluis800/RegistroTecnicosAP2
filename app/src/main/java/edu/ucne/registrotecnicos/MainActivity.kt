@@ -16,7 +16,7 @@ import androidx.room.Room
 import edu.ucne.registrotecnicos.data.local.database.TechnicianDb
 import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
 import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
-import edu.ucne.registrotecnicos.presentation.navigation.TecnicoNavHost
+import edu.ucne.registrotecnicos.presentation.navigation.GeneralNavHost
 import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             RegistroTecnicosTheme {
                 val navHost = rememberNavController()
-                TecnicoNavHost(navHost,tecnicoRepository)
+                GeneralNavHost(navHost,tecnicoRepository)
             }
         }
     }
