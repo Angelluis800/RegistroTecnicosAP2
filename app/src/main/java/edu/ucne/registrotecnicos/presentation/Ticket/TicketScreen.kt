@@ -156,26 +156,62 @@ fun TicketScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
-                        OutlinedButton(
-                            onClick = {
-                                fecha = ""
-                                cliente = ""
-                                asunto = ""
-                                descripcion = ""
-                                prioridad = ""
-                                tecnicoId = 0
-                                errorMessage = null
+                        if(ticketId < 1){
+                            OutlinedButton(
+                                onClick = {
+                                    fecha = ""
+                                    cliente = ""
+                                    asunto = ""
+                                    descripcion = ""
+                                    prioridad = ""
+                                    tecnicoId = 0
+                                    errorMessage = null
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "new button"
+                                )
+                                Text(text = "Nuevo")
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "new button"
-                            )
-                            Text(text = "Nuevo")
                         }
 
                         val scope = rememberCoroutineScope()
+
+                        if(ticketId > 0){
+                            OutlinedButton(
+                                onClick = {
+                                    scope.launch {
+                                        ticketRepository.delete(
+                                            TicketEntity(
+                                                ticketId = ticketId,
+                                                fecha = "",
+                                                prioridadId = 0,
+                                                cliente = "",
+                                                asunto = "",
+                                                descripcion = "",
+                                                tecnicoId = 0
+                                            )
+                                        )
+                                        cliente = ""
+                                        asunto = ""
+                                        descripcion = ""
+                                        prioridad = ""
+                                        fecha = ""
+                                        tecnicoId = 0
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Eliminar",
+                                    tint = Color.Red
+                                )
+                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                                Text(text = "Eliminar", color = Color.Red)
+                            }
+                        }
+
                         OutlinedButton(
                             onClick = {
                                 if (fecha.isBlank() || cliente.isBlank() || asunto.isBlank() || descripcion.isBlank() || prioridad.isBlank()) {
@@ -216,39 +252,7 @@ fun TicketScreen(
                             )
                             Text(text = if (ticketId > 0) "Editar" else "Guardar")
                         }
-                        if(ticketId > 0){
-                            OutlinedButton(
-                                onClick = {
-                                    scope.launch {
-                                        ticketRepository.delete(
-                                            TicketEntity(
-                                                ticketId = ticketId,
-                                                fecha = "",
-                                                prioridadId = 0,
-                                                cliente = "",
-                                                asunto = "",
-                                                descripcion = "",
-                                                tecnicoId = 0
-                                            )
-                                        )
-                                        cliente = ""
-                                        asunto = ""
-                                        descripcion = ""
-                                        prioridad = ""
-                                        fecha = ""
-                                        tecnicoId = 0
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Eliminar",
-                                    tint = Color.Red
-                                )
-                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                Text(text = "Eliminar", color = Color.Red)
-                            }
-                        }
+
                     }
                 }
             }
