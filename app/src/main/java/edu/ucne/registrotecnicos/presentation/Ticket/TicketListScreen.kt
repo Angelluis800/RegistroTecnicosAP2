@@ -1,5 +1,6 @@
 package edu.ucne.registrotecnicos.presentation.Ticket
 
+import android.graphics.Outline
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -125,8 +126,8 @@ private fun TicketRow(
                 }
             }
             .padding(
-                horizontal = 3.dp,
-                vertical = 2.dp
+                horizontal = 4.dp,
+                vertical = 4.dp
             )
     ) {
         Text(
