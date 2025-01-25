@@ -10,5 +10,5 @@ data class MensajeEntity (
     val mensajeId: Int? = null,
     val ticketId: Int,
     val contenido: String,
-    val fecha: Date = Date()
+    val fecha: String = "",
 )
