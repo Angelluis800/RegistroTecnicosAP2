@@ -1,27 +1,31 @@
 package edu.ucne.registrotecnicos.data.repository
 
+import edu.ucne.registrotecnicos.data.local.dao.MensajeDao
 import edu.ucne.registrotecnicos.data.local.dao.TicketDao
-import edu.ucne.registrotecnicos.data.local.database.AppDataDb
-import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
+import edu.ucne.registrotecnicos.data.local.entity.MensajeEntity
 import edu.ucne.registrotecnicos.data.local.entity.TicketEntity
 import kotlinx.coroutines.flow.Flow
 
 class TicketRepository(
-    private val ticketDb: AppDataDb
+    private val ticketDao: TicketDao,
+    private val mensajeDao: MensajeDao
 ) {
-    suspend fun save(ticket: TicketEntity) {
-        ticketDb.ticketDao().save(ticket)
+    suspend fun save(ticket: TicketEntity) = ticketDao.save(ticket)
+
+    suspend fun find(id: Int): TicketEntity? = ticketDao.find(id)
+
+    fun getAll(): Flow<List<TicketEntity>>  = ticketDao.getAll()
+
+    suspend fun delete(ticket: TicketEntity) = ticketDao.delete(ticket)
+
+    suspend fun addMessageToTicket(ticketId: Int, contenido: String) {
+        val mensaje = MensajeEntity(
+            ticketId = ticketId,
+            contenido = contenido
+        )
+        mensajeDao.save(mensaje)
     }
 
-    suspend fun find(id: Int): TicketEntity? {
-        return ticketDb.ticketDao().find(id)
-    }
+    fun getMessagesByTicketId(ticketId: Int): Flow<List<MensajeEntity>> = mensajeDao.getMessagesByTicketId(ticketId)
 
-    fun getAll(): Flow<List<TicketEntity>> {
-        return ticketDb.ticketDao().getAll()
-    }
-
-    suspend fun delete(ticket: TicketEntity) {
-        ticketDb.ticketDao().delete(ticket)
-    }
 }
