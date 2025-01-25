@@ -13,28 +13,14 @@ import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
 import edu.ucne.registrotecnicos.data.repository.TicketRepository
 import edu.ucne.registrotecnicos.presentation.Ticket.TicketListScreen
 import edu.ucne.registrotecnicos.presentation.Ticket.TicketScreen
+import edu.ucne.registrotecnicos.presentation.mensajes.ResponseScreen
 import edu.ucne.registrotecnicos.presentation.technician.TechnicianListScreen
 import edu.ucne.registrotecnicos.presentation.technician.TechnicianScreen
 
 @Composable
 fun GeneralNavHost(
     navHostController: NavHostController,
-    tecnicoRepository: TecnicoRepository,
-    ticketRepository: TicketRepository
 ){
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val technicianList by tecnicoRepository.getAll()
-        .collectAsStateWithLifecycle(
-            initialValue = emptyList(),
-            lifecycleOwner = lifecycleOwner,
-            minActiveState = Lifecycle.State.STARTED
-        )
-    val ticketList by ticketRepository.getAll()
-        .collectAsStateWithLifecycle(
-            initialValue = emptyList(),
-            lifecycleOwner = lifecycleOwner,
-            minActiveState = Lifecycle.State.STARTED
-        )
 
     NavHost(
         navController = navHostController,
@@ -42,38 +28,49 @@ fun GeneralNavHost(
     ) {
         composable<Screen.TechnicianList> {
             TechnicianListScreen(
-                tecnicoList = technicianList,
                 createTecnico = {
                     navHostController.navigate(Screen.Technician(0))
                 },
+                goToMenu = {
+                    navHostController.navigateUp()
+                },
+                goToTecnico = { tecnicoId ->
+                    navHostController.navigate(Screen.Technician(technicianId = tecnicoId))
+                }
             )
         }
         composable<Screen.Technician> {
+            val tecnicoId = it.toRoute<Screen.Technician>().technicianId
             TechnicianScreen(
-                tecnicoRepository = tecnicoRepository
+                tecnicoId = tecnicoId,
+                goBackToList = {
+                    navHostController.navigateUp()
+                }
             )
         }
         composable<Screen.TicketList> {
             TicketListScreen(
-                ticketList = ticketList,
                 createTicket = {
                     navHostController.navigate(Screen.Ticket(0))
                 },
-                editTicket = {
-                    navHostController.navigate(Screen.Ticket(it))
-
+                goToMenu = {
+                    navHostController.navigateUp()
                 },
-                deleteTicket = { ticket ->
-                    //ticketRepository.delete(ticket)
-                }
+               goToTicket = {
+                   navHostController.navigate(Screen.Ticket(it))
+               }
             )
         }
         composable<Screen.Ticket> {
             val ticketId = it.toRoute<Screen.Ticket>().ticketId
             TicketScreen(
-                ticketRepository = ticketRepository,
-                tecnicoRepository = tecnicoRepository,
-                ticketId = ticketId
+                ticketId = ticketId,
+                goBackToList = {
+                    navHostController.navigateUp()
+                },
+                goToReply = {
+                    navHostController.navigate(Screen.TicketResponse(ticketId))
+                }
             )
         }
         composable<Screen.HomeScreen> {
@@ -83,6 +80,15 @@ fun GeneralNavHost(
                 },
                 goToTickets = {
                     navHostController.navigate(Screen.TicketList)
+                }
+            )
+        }
+        composable<Screen.TicketResponse> {
+            val ticketId = it.toRoute<Screen.Ticket>().ticketId
+            ResponseScreen(
+                ticketId = ticketId,
+                goBackToTicket = {
+                    navHostController.navigateUp()
                 }
             )
         }

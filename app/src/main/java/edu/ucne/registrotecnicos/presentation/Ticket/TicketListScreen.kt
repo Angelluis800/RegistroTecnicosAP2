@@ -1,6 +1,7 @@
 package edu.ucne.registrotecnicos.presentation.Ticket
 
 import android.graphics.Outline
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -27,18 +30,39 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.registrotecnicos.data.local.entity.TicketEntity
+import edu.ucne.registrotecnicos.presentation.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketListScreen(
-    ticketList: List<TicketEntity>,
+    viewModel: TicketViewModel = hiltViewModel(),
     createTicket: () -> Unit,
-    editTicket: (Int) -> Unit,
-    deleteTicket: (TicketEntity) -> Unit
+    goToMenu: () -> Unit,
+    goToTicket: (Int) -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    TicketListBodyScreen(
+        uiState,
+        createTicket,
+        goToMenu,
+        goToTicket
+    )
+}
+
+@Composable
+fun TicketListBodyScreen(
+    uiState: TicketUiState,
+    createTicket: () -> Unit,
+    goToMenu: () -> Unit,
+    goToTicket: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -46,117 +70,102 @@ fun TicketListScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Lista de Tickets",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+            TopBar(
+                "Lista de Tickets",
+                onBackClick = { goToMenu() },
+                onCreateClick = { createTicket() }
             )
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "Fecha",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = "ID",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = "Asunto",
-                    modifier = Modifier.weight(2f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = "Cliente",
-                    modifier = Modifier.weight(2f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            HorizontalDivider()
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(ticketList) { ticket ->
+                item {
+                    TicketHeaderRow()
+                }
+                items(uiState.tickets) {
                     TicketRow(
-                        ticket = ticket,
-                        editTicket = { ticket.ticketId?.let { it1 -> editTicket(it1)}},
+                        it,
+                        goToTicket
                     )
                 }
             }
-        }
-        FilledIconButton(
-            onClick = { createTicket() },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(20.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Crear Ticket"
-            )
         }
     }
 }
 
 @Composable
-private fun TicketRow(
-    ticket: TicketEntity,
-    editTicket: (Int) -> Unit,
-) {
+private fun TicketHeaderRow() {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { ticket
-                .ticketId?.let {
-                    editTicket(it)
-                }
-            }
-            .padding(
-                horizontal = 4.dp,
-                vertical = 4.dp
-            )
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.secondary)
+            .padding(vertical = 12.dp)
     ) {
         Text(
             modifier = Modifier.weight(1f),
-            text = ticket.fecha,
-            style = MaterialTheme.typography.bodyMedium
+            text = "ID",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
-
         Text(
             modifier = Modifier.weight(1f),
-            text = ticket.ticketId.toString(),
-            style = MaterialTheme.typography.bodyMedium
+            text = "Prioridad",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
-
         Text(
-            modifier = Modifier.weight(2f),
-            text = ticket.asunto,
-            style = MaterialTheme.typography.bodyMedium
+            modifier = Modifier.weight(1f),
+            text = "Asunto",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
-
         Text(
-            modifier = Modifier.weight(2f),
-            text = ticket.cliente,
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Icon(
-            imageVector = Icons.Default.Info,
-            contentDescription = "detalle"
+            modifier = Modifier.weight(1f),
+            text = "Cliente",
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
         )
     }
-    HorizontalDivider()
+    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+}
+
+@Composable
+private fun TicketRow(
+    it: TicketEntity,
+    goToTicket: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable {
+                goToTicket(it.ticketId!!)
+            },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = it.ticketId.toString(),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = it.prioridadId.toString(),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = it.asunto,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Text(
+                modifier = Modifier.weight(1f),
+                text = it.cliente,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
 }

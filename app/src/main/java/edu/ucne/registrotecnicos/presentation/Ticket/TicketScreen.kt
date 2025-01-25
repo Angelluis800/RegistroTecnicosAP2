@@ -1,97 +1,62 @@
 package edu.ucne.registrotecnicos.presentation.Ticket
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
-import edu.ucne.registrotecnicos.data.local.entity.TicketEntity
-import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
-import edu.ucne.registrotecnicos.data.repository.TicketRepository
-import kotlinx.coroutines.launch
+import edu.ucne.registrotecnicos.presentation.components.ConfirmDeletionDialog
+import edu.ucne.registrotecnicos.presentation.components.CustomDropdownMenu
+import edu.ucne.registrotecnicos.presentation.components.TopBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketScreen(
+    viewModel: TicketViewModel = hiltViewModel(),
     ticketId: Int,
-    ticketRepository: TicketRepository,
-    tecnicoRepository: TecnicoRepository
+    goBackToList: () -> Unit,
+    goToReply: () -> Unit
 ) {
-    var fecha by remember { mutableStateOf("") }
-    var cliente by remember { mutableStateOf("") }
-    var asunto by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
-    var tecnicoId by remember { mutableIntStateOf(0) }
-    var prioridad by remember { mutableStateOf("") }
-    var errorMessage: String? by remember { mutableStateOf(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val tecnicosList by viewModel.tecnicosList.collectAsStateWithLifecycle()
+    TicketBodyScreen(
+        ticketId = ticketId,
+        viewModel = viewModel,
+        uiState = uiState,
+        tecnicosList = tecnicosList,
+        goBackToList = goBackToList,
+        goToReply = goToReply
+    )
+}
 
-    val technicians = tecnicoRepository.getAll().collectAsState(emptyList())
-
+@Composable
+fun TicketBodyScreen(
+    ticketId: Int,
+    viewModel: TicketViewModel,
+    uiState: TicketUiState,
+    tecnicosList: List<TechnicianEntity>,
+    goBackToList: () -> Unit,
+    goToReply: () -> Unit
+) {
     LaunchedEffect(ticketId) {
         if (ticketId > 0) {
-            val ticket = ticketRepository.find(ticketId)
-            ticket?.let {
-                fecha = it.fecha
-                cliente = it.cliente
-                asunto = it.asunto
-                descripcion = it.descripcion
-                tecnicoId = it.tecnicoId
-                prioridad = it.prioridadId.toString()
-            }
+            viewModel.find(ticketId)
         }
     }
-
+    val openDialog = remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = if (ticketId > 0) "Editar Ticket" else "Crear Ticket",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
+            TopBar(if (ticketId > 0) "Editar Ticket" else "Registrar Ticket")
         }
     ) { innerPadding ->
         Column(
@@ -100,159 +65,158 @@ fun TicketScreen(
                 .padding(innerPadding)
                 .padding(8.dp)
         ) {
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp)
                 ) {
                     OutlinedTextField(
-                        label = { Text(text = "Fecha") },
-                        value = fecha,
-                        onValueChange = { fecha = it },
+                        label = { Text(text = "Asunto") },
+                        value = uiState.asunto,
+                        onValueChange = viewModel::onAsuntoChange,
                         modifier = Modifier.fillMaxWidth()
+                    )
+
+                    OutlinedTextField(
+                        label = { Text(text = "Descripción") },
+                        value = uiState.descripcion,
+                        onValueChange = viewModel::onDescripcionChange,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        maxLines = 3,
+                        singleLine = false
+                    )
+
+                    OutlinedTextField(
+                        label = { Text(text = "Fecha") },
+                        value = uiState.fecha,
+                        onValueChange = viewModel::onFechaChange,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        maxLines = 3,
+                        singleLine = false
+                    )
+
+                    val prioridades = listOf(1, 2, 3)
+                    var expandedPrioridad by remember { mutableStateOf(false) }
+                    CustomDropdownMenu(
+                        label = "Prioridad",
+                        selectedItem = uiState.prioridadId?.toString() ?: "Seleccionar Prioridad",
+                        items = prioridades,
+                        onItemSelected = { numero -> viewModel.onPrioridadChange(numero) },
+                        expanded = expandedPrioridad,
+                        onExpandedChange = { expandedPrioridad = it },
+                        itemText = { it.toString() }
                     )
                     OutlinedTextField(
                         label = { Text(text = "Cliente") },
-                        value = cliente,
-                        onValueChange = { cliente = it },
+                        value = uiState.cliente,
+                        onValueChange = viewModel::onClienteChange,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    OutlinedTextField(
-                        label = { Text(text = "Asunto") },
-                        value = asunto,
-                        onValueChange = { asunto = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        label = { Text(text = "Descripción") },
-                        value = descripcion,
-                        onValueChange = { descripcion = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        label = { Text(text = "Prioridad (1-6)") },
-                        value = prioridad,
-                        onValueChange = { prioridad = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    var tecnicoSeleccionado by remember { mutableStateOf<TechnicianEntity?>(null) }
+                    var expandedTecnico by remember { mutableStateOf(false) }
 
-                    Spacer(modifier = Modifier.padding(2.dp))
-
-                    TechnicianDropdown(
-                        tecnicos = technicians.value,
-                        tecnicoIdSeleccionado = tecnicoId,
-                        onTechnicianSelected = { tecnicoId = it }
-                    )
-
-                    Spacer(modifier = Modifier.padding(2.dp))
-                    errorMessage?.let {
-                        Text(text = it, color = Color.Red)
+                    LaunchedEffect(uiState.tecnicoId) {
+                        val tecnico = tecnicosList.find { it.technicianId == uiState.tecnicoId }
+                        tecnicoSeleccionado = tecnico
                     }
-                    Row(
+                    CustomDropdownMenu(
+                        label = "Técnico",
+                        selectedItem = tecnicoSeleccionado?.name ?: "Seleccionar Técnico",
+                        items = tecnicosList,
+                        onItemSelected = { tecnico ->
+                            tecnicoSeleccionado = tecnico
+                            tecnico.technicianId?.let { viewModel.onTecnicoChange(it) }
+                        },
+                        expanded = expandedTecnico,
+                        onExpandedChange = { expandedTecnico = it },
+                        itemText = { it.name }
+                    )
+                }
+                Spacer(modifier = Modifier.padding(2.dp))
+                uiState.errorMessage?.let {
+                    Text(text = it, color = Color.Red)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(onClick = { goBackToList() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                        Text(text = "Atrás")
+                    }
+
+                    OutlinedButton(onClick = {
+                        if (ticketId > 0) {
+                            openDialog.value = true
+                        } else {
+                            viewModel.new()
+                            goBackToList()
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = if (ticketId > 0) "Borrar" else "Limpiar"
+                        )
+                        Text(text = if (ticketId > 0) "Borrar" else "Limpiar")
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            if (viewModel.isValid()) {
+                                viewModel.save()
+                                goBackToList()
+                            }
+                        }) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Save button"
+                        )
+                        Text(text = "Guardar")
+                    }
+                }
+
+                ConfirmDeletionDialog(
+                    openDialog = openDialog,
+                    onConfirm = {
+                        viewModel.delete()
+                        goBackToList()
+                    },
+                    onDismiss = {
+                        openDialog.value = false
+                    }
+                )
+                if (ticketId > 0) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if(ticketId < 1){
-                            OutlinedButton(
-                                onClick = {
-                                    fecha = ""
-                                    cliente = ""
-                                    asunto = ""
-                                    descripcion = ""
-                                    prioridad = ""
-                                    tecnicoId = 0
-                                    errorMessage = null
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Refresh,
-                                    contentDescription = "new button"
-                                )
-                                Text(text = "Nuevo")
-                            }
-                        }
-
-                        val scope = rememberCoroutineScope()
-
-                        if(ticketId > 0){
-                            OutlinedButton(
-                                onClick = {
-                                    scope.launch {
-                                        ticketRepository.delete(
-                                            TicketEntity(
-                                                ticketId = ticketId,
-                                                fecha = "",
-                                                prioridadId = 0,
-                                                cliente = "",
-                                                asunto = "",
-                                                descripcion = "",
-                                                tecnicoId = 0
-                                            )
-                                        )
-                                        cliente = ""
-                                        asunto = ""
-                                        descripcion = ""
-                                        prioridad = ""
-                                        fecha = ""
-                                        tecnicoId = 0
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Eliminar",
-                                    tint = Color.Red
-                                )
-                                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                                Text(text = "Eliminar", color = Color.Red)
-                            }
-                        }
-
                         OutlinedButton(
                             onClick = {
-                                if (fecha.isBlank() || cliente.isBlank() || asunto.isBlank() || descripcion.isBlank() || prioridad.isBlank()) {
-                                    errorMessage = "No se puede guardar con los campos vacíos"
-                                    return@OutlinedButton
-                                }
-
-                                if (prioridad.toIntOrNull() !in 1..6) {
-                                    errorMessage = "La prioridad debe estar entre 1 y 6"
-                                    return@OutlinedButton
-                                }
-
-                                scope.launch {
-                                    ticketRepository.save(
-                                        TicketEntity(
-                                            ticketId = if (ticketId > 0) ticketId else null,
-                                            fecha = fecha,
-                                            prioridadId = prioridad.toInt(),
-                                            cliente = cliente,
-                                            asunto = asunto,
-                                            descripcion = descripcion,
-                                            tecnicoId = tecnicoId
-                                        )
-                                    )
-                                    fecha = ""
-                                    cliente = ""
-                                    asunto = ""
-                                    descripcion = ""
-                                    prioridad = ""
-                                    tecnicoId = 0
-                                    errorMessage = null
-                                }
-                            }
+                                goToReply()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth(0.6f)
+                                .height(48.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Edit,
-                                contentDescription = "save button"
+                                contentDescription = "Reply button"
                             )
-                            Text(text = if (ticketId > 0) "Editar" else "Guardar")
+                            Text(
+                                text = "Responder Ticket",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
                         }
-
                     }
                 }
             }

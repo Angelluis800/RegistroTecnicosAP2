@@ -20,4 +20,7 @@ sealed class Screen {
 
     @Serializable
     data object HomeScreen : Screen() //Pantalla de Inicio
+
+    @Serializable
+    data class TicketResponse(val ticketId: Int) : Screen()
 }
