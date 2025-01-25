@@ -5,8 +5,9 @@ import edu.ucne.registrotecnicos.data.local.dao.TicketDao
 import edu.ucne.registrotecnicos.data.local.entity.MensajeEntity
 import edu.ucne.registrotecnicos.data.local.entity.TicketEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class TicketRepository(
+class TicketRepository @Inject constructor(
     private val ticketDao: TicketDao,
     private val mensajeDao: MensajeDao
 ) {
@@ -25,7 +26,5 @@ class TicketRepository(
         )
         mensajeDao.save(mensaje)
     }
-
     fun getMessagesByTicketId(ticketId: Int): Flow<List<MensajeEntity>> = mensajeDao.getMessagesByTicketId(ticketId)
-
 }
