@@ -18,22 +18,19 @@ import edu.ucne.registrotecnicos.ui.theme.RegistroTecnicosTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var tecnicoRepository: TecnicoRepository
-    private  lateinit var ticketRepository: TicketRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             RegistroTecnicosTheme {
                 val navHost = rememberNavController()
-                GeneralNavHost(navHost,tecnicoRepository,ticketRepository)
+                GeneralNavHost(navHost)
             }
         }
     }
 
-    @Preview(showBackground = true, showSystemUi = true)
+   /* @Preview(showBackground = true, showSystemUi = true)
     @Composable
     fun TechPreview() {
         RegistroTecnicosTheme {
@@ -41,7 +38,7 @@ class MainActivity : ComponentActivity() {
                 TechnicianEntity(1, "Angel", 15000.0)
             )
         }
-    }
+    }*/
 }
 
 
