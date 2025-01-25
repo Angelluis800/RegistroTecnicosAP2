@@ -130,11 +130,11 @@ private fun TicketRow(
                 vertical = 4.dp
             )
     ) {
-        Text(
+       /* Text(
             modifier = Modifier.weight(1f),
             text = ticket.fecha,
             style = MaterialTheme.typography.bodyMedium
-        )
+        )*/
 
         Text(
             modifier = Modifier.weight(1f),

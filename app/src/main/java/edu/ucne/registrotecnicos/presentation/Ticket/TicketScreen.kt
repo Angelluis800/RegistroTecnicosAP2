@@ -68,7 +68,7 @@ fun TicketScreen(
         if (ticketId > 0) {
             val ticket = ticketRepository.find(ticketId)
             ticket?.let {
-                fecha = it.fecha
+                //fecha = it.fecha
                 cliente = it.cliente
                 asunto = it.asunto
                 descripcion = it.descripcion
@@ -185,7 +185,7 @@ fun TicketScreen(
                                         ticketRepository.delete(
                                             TicketEntity(
                                                 ticketId = ticketId,
-                                                fecha = "",
+                                                //fecha = "",
                                                 prioridadId = 0,
                                                 cliente = "",
                                                 asunto = "",
@@ -228,7 +228,7 @@ fun TicketScreen(
                                     ticketRepository.save(
                                         TicketEntity(
                                             ticketId = if (ticketId > 0) ticketId else null,
-                                            fecha = fecha,
+                                            //fecha = fecha,
                                             prioridadId = prioridad.toInt(),
                                             cliente = cliente,
                                             asunto = asunto,
