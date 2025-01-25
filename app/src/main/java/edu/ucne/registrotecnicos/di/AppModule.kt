@@ -24,10 +24,11 @@ object AppModule {
             .build()
 
     @Provides
-    @Singleton
     fun provideTicketDao(appDataDb: AppDataDb) = appDataDb.ticketDao()
 
     @Provides
-    @Singleton
     fun provideTecnicoDao(appDataDb: AppDataDb) = appDataDb.technicianDao()
+
+    @Provides
+    fun provideMensajeDao(appDataDb: AppDataDb) = appDataDb.mensajeDao()
 }
