@@ -42,7 +42,7 @@ fun TopBar(
                 IconButton(onClick = onCreateClick) {
                     Icon(
                         imageVector = Icons.Filled.Add,
-                        contentDescription = "Crear Técnico",
+                        contentDescription = "Crear ",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
