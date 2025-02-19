@@ -21,7 +21,6 @@ import edu.ucne.registrotecnicos.presentation.technician.TechnicianScreen
 fun GeneralNavHost(
     navHostController: NavHostController,
 ){
-
     NavHost(
         navController = navHostController,
         startDestination = Screen.HomeScreen

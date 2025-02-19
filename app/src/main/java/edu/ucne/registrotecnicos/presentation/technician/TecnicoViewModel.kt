@@ -2,6 +2,7 @@ package edu.ucne.registrotecnicos.presentation.technician
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.registrotecnicos.data.local.entity.TechnicianEntity
 import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
@@ -60,7 +61,7 @@ class TecnicoViewModel @Inject constructor(
 
     fun delete() {
         viewModelScope.launch {
-            tecnicoRepository.delete(uiState.value.toEntity())
+            tecnicoRepository.delete(_uiState.value.toEntity())
         }
     }
 
