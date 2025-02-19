@@ -11,7 +11,6 @@ sealed class Screen {
     data class Technician(val technicianId: Int) : Screen() //Registro
 
     //Tickets
-
     @Serializable
     data object TicketList : Screen() //Consulta
 
@@ -23,4 +22,11 @@ sealed class Screen {
 
     @Serializable
     data class TicketResponse(val ticketId: Int) : Screen()
+
+    //Articulos
+    @Serializable
+    data object ArticuloList : Screen()
+
+    @Serializable
+    data class Articulo(val articuloId: Int) : Screen()
 }

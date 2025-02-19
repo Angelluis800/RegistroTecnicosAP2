@@ -1,21 +1,17 @@
 package edu.ucne.registrotecnicos.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import edu.ucne.registrotecnicos.data.repository.TecnicoRepository
-import edu.ucne.registrotecnicos.data.repository.TicketRepository
 import edu.ucne.registrotecnicos.presentation.Ticket.TicketListScreen
 import edu.ucne.registrotecnicos.presentation.Ticket.TicketScreen
 import edu.ucne.registrotecnicos.presentation.mensajes.ResponseScreen
 import edu.ucne.registrotecnicos.presentation.technician.TechnicianListScreen
 import edu.ucne.registrotecnicos.presentation.technician.TechnicianScreen
+import edu.ucne.registrotecnicos.presentation.articulo.ArticuloListScreen
+import edu.ucne.registrotecnicos.presentation.articulo.ArticuloScreen
 
 @Composable
 fun GeneralNavHost(
@@ -79,16 +75,34 @@ fun GeneralNavHost(
                 },
                 goToTickets = {
                     navHostController.navigate(Screen.TicketList)
+                },
+                goToArticulos = {
+                    navHostController.navigate(Screen.ArticuloList)
                 }
+
             )
         }
         composable<Screen.TicketResponse> {
             val ticketId = it.toRoute<Screen.Ticket>().ticketId
             ResponseScreen(
                 ticketId = ticketId,
-                goBackToTicket = {
+                goBackToTicket = {1
                     navHostController.navigateUp()
                 }
+            )
+        }
+        composable<Screen.ArticuloList> {
+            ArticuloListScreen(
+                createArticulo = { navHostController.navigate(Screen.Articulo(0)) },
+                goToMenu = { navHostController.navigateUp() },
+                goToArticulo = { navHostController.navigate(Screen.Articulo(it)) }
+            )
+        }
+        composable<Screen.Articulo> {
+            val articuloId = it.toRoute<Screen.Articulo>().articuloId
+            ArticuloScreen(
+                articuloId = articuloId,
+                goBackToList = { navHostController.navigateUp() }
             )
         }
     }
