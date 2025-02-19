@@ -43,7 +43,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     goToTecnicos: () -> Unit,
-    goToTickets: () -> Unit
+    goToTickets: () -> Unit,
+    goToArticulos: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -102,6 +103,23 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Registro de Tickets")
+                }
+
+                // Espacio entre los botones
+                Spacer(modifier = Modifier.height(16.dp))
+
+                OutlinedButton(
+                    onClick = goToArticulos,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Ir hacia Articulos"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Registro de Articulos")
                 }
             }
         }
