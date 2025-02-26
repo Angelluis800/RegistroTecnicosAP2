@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.registrotecnicos.data.local.entity.ArticuloEntity
 import edu.ucne.registrotecnicos.data.remote.dto.ArticuloDto
 import edu.ucne.registrotecnicos.presentation.components.TopBar
 
@@ -140,14 +141,14 @@ private fun ArticuloHeaderRow() {
 
 @Composable
 private fun ArticuloRow(
-    articulo: ArticuloDto,
+    articulo: ArticuloEntity,
     goToPrioridad: (Int) -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { goToPrioridad(articulo.itemId) },
+            .clickable { articulo.articuloId?.let { goToPrioridad(it) } },
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -158,13 +159,13 @@ private fun ArticuloRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = articulo.itemId.toString(),
+                text = articulo.articuloId.toString(),
                 modifier = Modifier.weight(0.5f),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = articulo.description,
+                text = articulo.descripcion,
                 modifier = Modifier.weight(2f),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
@@ -172,7 +173,7 @@ private fun ArticuloRow(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = String.format("%.2f", articulo.cost),
+                text = String.format("%.2f", articulo.costo),
                 modifier = Modifier.weight(1.5f),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
@@ -180,7 +181,7 @@ private fun ArticuloRow(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = String.format("%.2f", articulo.price),
+                text = String.format("%.2f", articulo.precio),
                 modifier = Modifier.weight(1.5f),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
