@@ -12,7 +12,7 @@ import retrofit2.Response
 interface ArticuloManagerApi {
 
     @GET("api/Items")
-    suspend fun getArticulos(): Response<List<ArticuloDto>>
+    suspend fun getArticulos(): List<ArticuloDto>
 
     @GET("api/Items/{id}")
     suspend fun getArticulo(@Path("id") id: Int): Response<ArticuloDto>

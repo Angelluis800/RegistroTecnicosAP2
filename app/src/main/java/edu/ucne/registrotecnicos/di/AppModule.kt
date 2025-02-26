@@ -31,4 +31,7 @@ object AppModule {
 
     @Provides
     fun provideMensajeDao(appDataDb: AppDataDb) = appDataDb.mensajeDao()
+
+    @Provides
+    fun provideArticuloDao(appDataDb: AppDataDb) = appDataDb.articuloDao()
 }

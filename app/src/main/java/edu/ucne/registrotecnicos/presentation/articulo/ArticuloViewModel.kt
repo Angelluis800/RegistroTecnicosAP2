@@ -103,19 +103,36 @@ class ArticuloViewModel @Inject constructor(
         }
     }
 
-    fun getAllArticulos() {
+    fun getAllArticulos(){
         viewModelScope.launch {
             articuloRepository.getAllArticulos().collectLatest { result ->
-                when (result) {
-                    is Resource.Loading -> _uiState.update { it.copy(isLoading = true) }
-                    is Resource.Success -> _uiState.update {
-                        it.copy(listaArticulos = result.data ?: emptyList(), isLoading = false)
+                when(result) {
+                    is Resource.Loading -> {
+                        _uiState.update {
+                            it.copy(isLoading = true)
+                        }
                     }
-                    is Resource.Error -> _uiState.update { it.copy(errorMessage = result.message, isLoading = false) }
+                    is Resource.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                listaArticulos = result.data ?: emptyList(),
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is Resource.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                errorMessage = result.message ?: "Error desconocido",
+                                isLoading = false
+                            )
+                        }
+                    }
                 }
             }
         }
     }
+
 
     fun new() {
         _uiState.value = ArticuloUiState()

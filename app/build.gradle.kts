@@ -84,6 +84,15 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.logging.interceptor)
 
+    //Mockk/Testing
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(libs.truth)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.robolectric)
+
     //GSON
     implementation(libs.gson)
     implementation(libs.converter.gson)
